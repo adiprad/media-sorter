@@ -3,6 +3,8 @@
 # Make sure to install exifread and argparse using pip
 
 import os, exifread, argparse
+from shutil import copyfile
+
 extList=['jpg','jpeg','JPG','JPEG']
 parser = argparse.ArgumentParser(description='Organize media files based on EXIF data')
 parser.add_argument('source_dir',type=str,help='Source Directory')
@@ -19,13 +21,13 @@ for root, dirs, files in os.walk(args.source_dir,topdown=False):
             if fileExt==ext:
                 f=open(filePath,'rb')
                 date=exifread.process_file(f,stop_tag='EXIF DateTimeOriginal')['EXIF DateTimeOriginal']
-                print filePath
+                print (filePath)
                 date=str(date).split(" ")[0].split(":")
                 year=output+'/'+date[0]
                 month=year+'/'+date[1]
                 day=month+'/'+date[2]
                 dest=day+'/'+name
-                print date
+                print (dest)
                 if os.path.isdir(year)==False:
                     os.mkdir(year)
                 if os.path.isdir(month)==False:
@@ -33,4 +35,6 @@ for root, dirs, files in os.walk(args.source_dir,topdown=False):
                 if os.path.isdir(day)==False:
                     os.mkdir(day)
                 if os.path.exists(dest)==False:
-                    os.rename(filePath, dest)
+                    copyfile(filePath, dest)
+                else:
+                    print ('ERROR: file exists')
